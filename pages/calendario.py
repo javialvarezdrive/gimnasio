@@ -38,10 +38,22 @@ def main():
     if not df.empty:
         eventos = []
         for _, row in df.iterrows():
+            # Procesar la fecha, convertir string a date si es necesario
             fecha = row["fecha"]
             if isinstance(fecha, str):
                 fecha = datetime.strptime(fecha, '%Y-%m-%d').date()
-            color = "#FF5733" if row['tipos_actividad']['nombre']=="Defensa Personal" else "#33A1FF"
+            
+            # Acceso seguro a 'tipos_actividad'
+            tipo_act = row.get("tipos_actividad")
+            if isinstance(tipo_act, dict) and "nombre" in tipo_act:
+                tipo_nombre = tipo_act["nombre"]
+            else:
+                tipo_nombre = ""
+            
+            # Definir el color basado en el nombre del tipo de actividad
+            color = "#FF5733" if tipo_nombre == "Defensa Personal" else "#33A1FF"
+            
+            # Determinar hora de inicio y fin según el turno
             if row["turno"]=="Mañana":
                 inicio = "09:00"
                 fin = "11:00"
@@ -51,9 +63,11 @@ def main():
             else:
                 inicio = "20:00"
                 fin = "22:00"
+                
+            # Construir el evento, usando el tipo_nombre obtenido de forma segura
             eventos.append({
                 "id": row["id"],
-                "title": f"{row['tipos_actividad']['nombre']} - {row['usuarios']['nombre']}",
+                "title": f"{tipo_nombre} - {row['usuarios']['nombre']}",
                 "start": f"{fecha.isoformat()}T{inicio}",
                 "end": f"{fecha.isoformat()}T{fin}",
                 "backgroundColor": color,

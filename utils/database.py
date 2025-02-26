@@ -64,9 +64,9 @@ def get_actividades(filtros=None):
         if 'tipo_actividad' in filtros and filtros['tipo_actividad']:
             query = query.eq('tipo_actividad_id', filtros['tipo_actividad'])
         if 'seccion' in filtros and filtros['seccion']:
-            query = query.eq('usuarios.seccion', filtros['seccion'])
+            query = query.eq('usuarios->>seccion', filtros['seccion'])
         if 'grupo' in filtros and filtros['grupo']:
-            query = query.eq('usuarios.grupo', filtros['grupo'])
+            query = query.eq('usuarios->>grupo', filtros['grupo'])
         if 'completada' in filtros:
             query = query.eq('completada', filtros['completada'])
     response = query.execute()
